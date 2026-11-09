@@ -1,0 +1,112 @@
+{
+ "as_of": "2026-11-08",
+ "note": "Unit prices for the four lines that make up a voice-agent call. Every number carries the vendor page it came from and the date it was read. This file is the data layer; voicecost.py is the only renderer.",
+ "disclosure": "Links marked affiliate are a9n9's affiliate links: a9n9 earns a commission if you buy through them. The buyer pays the vendor's own price; nothing is returned to the buyer.",
+ "vendors": {
+  "elevenlabs": {
+   "name": "ElevenLabs",
+   "source": "https://elevenlabs.io/pricing/api",
+   "verified": "2026-11-08T15:15Z",
+   "affiliate_disclosure": "affiliate link: a9n9 earns a commission if you buy through it",
+   "affiliate_link": "https://try.elevenlabs.io/n0p18v26b5bh",
+   "agent_usd_per_minute": 0.08,
+   "agent_note": "Agents, Realtime v1 Mini and Realtime v1 Max are all printed as $0.08 per minute. On the two Realtime tiers the page adds '+ LLM usage', i.e. the LLM is a separate bill there.",
+   "tts_usd_per_1000_chars_v4": 0.08,
+   "tts_usd_per_1000_chars_turbo_flash": 0.04,
+   "ladder": [
+    {"name": "Free", "usd": 0, "chars": 10000},
+    {"name": "Starter", "usd": 6, "chars": 75000},
+    {"name": "Creator", "usd": 22, "chars": 275000},
+    {"name": "Pro", "usd": 99, "chars": 1238000},
+    {"name": "Scale", "usd": 299, "chars": 3738000},
+    {"name": "Business", "usd": 990, "chars": 12375000}
+   ],
+   "ladder_note": "Characters included per month at list price. The ladder is flat at ~$1 per 12,500 characters, so a bigger plan does not lower the unit price; above 12,375,000 characters/month the published self-serve ladder ends.",
+   "traps": [
+    "The marketing FAQ describes credits ($0.18 per 1,000 characters) while /pricing/api bills dollars ($0.08 per 1,000) - a 2.3x difference depending on which page you read.",
+    "First-month promos are not prices: list price is $6 Starter / $22 Creator."
+   ]
+  },
+  "deepgram": {
+   "name": "Deepgram",
+   "source": "https://deepgram.com/pricing",
+   "verified": "2026-11-08T14:08Z",
+   "affiliate_disclosure": null,
+   "affiliate_link": null,
+   "stt_usd_per_minute_streaming_nova3_monolingual": 0.0077,
+   "stt_usd_per_minute_streaming_multilingual": 0.0092,
+   "stt_usd_per_prerecorded_minute_nova3_monolingual": 0.0043,
+   "voice_agent_usd_per_minute_standard": 0.075,
+   "tts_usd_per_1000_chars_aura2": 0.03,
+   "tts_usd_per_1000_chars_aura1": 0.015,
+   "traps": [
+    "The $0.075 headline on that page is the Voice Agent (STT + managed LLM + TTS), not speech-to-text. STT alone is $0.0043-$0.0092 per minute, i.e. 8-17x cheaper; reading the agent rate as an STT rate is the single most common pricing error about Deepgram.",
+    "Deepgram is not an affiliate partner of a9n9: no link, no commission. It appears here because it is the cheapest line in the stack, and a comparison that hid it would be an advertisement."
+   ]
+  },
+  "novita": {
+   "name": "Novita AI",
+   "source": "https://novita.ai/pricing",
+   "verified": "2026-11-08T14:42Z",
+   "affiliate_disclosure": "affiliate link: a9n9 earns a commission if you buy through it",
+   "affiliate_link": "https://novita.ai/?ref=mjvknwmo&utm_source=affiliate",
+   "model": "deepseek-deepseek-v4.1-flash-1017",
+   "model_name": "DeepSeek V4.1 Flash 1017",
+   "input_usd_per_mtok": 0.3,
+   "output_usd_per_mtok": 1.2,
+   "cache_read_usd_per_mtok": 0.006,
+   "traps": [
+    "The model, not the provider, sets this line. The same model id is sold by other providers at up to 7.6x the price, so re-check the model id before quoting it."
+   ]
+  },
+  "telephony": {
+   "name": "Telephony (carrier)",
+   "source": "not a vendor page: a default the user should replace with their carrier's rate",
+   "verified": null,
+   "affiliate_disclosure": null,
+   "affiliate_link": null,
+   "usd_per_minute": 0.0085,
+   "traps": [
+    "Inbound and outbound numbers, per-minute termination and number rental are three different charges on a real phone bill. This line is one number for all three; it is an estimate, not a quote."
+   ]
+  }
+ },
+ "stacks": {
+  "managed-el": {
+   "name": "ElevenLabs Agents (managed)",
+   "lines": ["elevenlabs.agent_usd_per_minute"],
+   "what": "One vendor bills one price per connected minute: speech recognition, a managed LLM and speech synthesis are inside it."
+  },
+  "dg-agent": {
+   "name": "Deepgram Voice Agent (managed)",
+   "lines": ["deepgram.voice_agent_usd_per_minute_standard"],
+   "what": "Deepgram's bundled agent minute: STT + managed LLM + TTS."
+  },
+  "assembled": {
+   "name": "Assembled cheap stack",
+   "lines": [
+    "deepgram.stt_usd_per_minute_streaming_nova3_monolingual",
+    "deepgram.tts_usd_per_1000_chars_aura2",
+    "novita.llm_tokens"
+   ],
+   "what": "Deepgram streaming STT + Novita open-model LLM + Deepgram Aura-2 TTS, billed separately. Cheapest of the four, and the most work to operate."
+  },
+  "el-tts": {
+   "name": "ElevenLabs TTS + cheap STT and LLM",
+   "lines": [
+    "deepgram.stt_usd_per_minute_streaming_nova3_monolingual",
+    "elevenlabs.tts_usd_per_1000_chars_v4",
+    "novita.llm_tokens"
+   ],
+   "what": "ElevenLabs voice quality on the output side, priced per character, with recognition and the LLM bought elsewhere."
+  }
+ },
+ "assumptions": {
+  "chars_per_spoken_minute": 900,
+  "chars_per_spoken_minute_note": "Characters of script per minute of finished audio swings 600-1,000 with speaker and pacing. ElevenLabs' own price table divides by 1,000 ('75,000 chars ~ 75 min'); 900 is used here as a middle estimate and every number moves with it.",
+  "turns_per_minute": 2,
+  "tokens_in_per_turn": 250,
+  "tokens_out_per_turn": 45,
+  "tokens_note": "A 3-minute call at 2 turns per minute is 6 turns; 250 input tokens per turn is a short system prompt plus the last few exchanges, 45 out is one or two spoken sentences."
+ }
+}
