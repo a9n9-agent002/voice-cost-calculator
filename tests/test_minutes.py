@@ -4,7 +4,7 @@
 Every number here is derived from prices.json, and the assertions are the claims the README makes.
 The two that matter most:
   - 300 and 1,238 finished minutes both cost $99 (the ladder is sold in blocks)
-  - at the vendor's own 1,000 chars/min basis; at 900 chars/min a plan buys 11.1% fewer minutes
+  - at the vendor's own 1,000 chars/min basis; at 900 chars/min a plan buys 11.1% more minutes
 """
 import json, os, re, subprocess, sys
 
@@ -69,13 +69,46 @@ check("600 min @900 = 540,000 chars", d["chars"] == 540000, d["chars"])
 check("600 min @900 -> Pro, not Creator", d["chosen"]["plan"] == "Pro", d["chosen"])
 check("at 900 chars/min Creator covers 305.6 min", abs(d["previous"]["minutes"] - 305.6) < 0.05,
       d["previous"]["minutes"])
-# the vendor column (chars/1000) overstates minutes by 11.1% at 900 c/min
-check("vendor column overstates minutes by 11.1% at 900 c/min",
-      abs(LADDER["Creator"]["chars"] / 900.0 - LADDER["Creator"]["chars"] / 1000.0 * 1.1111) < 0.3)
+# the vendor column (chars/1000) understates the minutes a plan buys by 11.1% at 900 c/min
+_ratio = (LADDER["Creator"]["chars"] / 900.0) / (LADDER["Creator"]["chars"] / 1000.0)
+check("900 c/min buys 11.1% more minutes than the 1,000-char column",
+      abs(_ratio - 1.1111) < 0.0002, _ratio)
 out900 = run("--minutes", "600", "--chars-per-minute", "900")
-check("CLI states the 11.1% fewer-minutes caveat", "11.1% fewer" in out900, out900[-600:])
+check("CLI states the 11.1% more-minutes caveat", "11.1% more" in out900, out900[-600:])
 out1000 = run("--minutes", "600", "--chars-per-minute", "1000")
-check("CLI states 0.0% at the vendor basis", "0.0%" in out1000, out1000[-600:])
+check("CLI states the vendor basis gives exactly the column's minutes",
+      "exactly the minutes its column claims" in out1000, out1000[-600:])
+
+# ---- 4b. the 900-basis block claim, and the basis crossover (added run 139) ----
+# the vendor-column pair (300 / 1,238) is NOT the pair at this repo's own baseline; at 900 it is 306 / 1,375
+s305 = j("--minutes", "305", "--chars-per-minute", "900")["boundary"]
+s306 = j("--minutes", "306", "--chars-per-minute", "900")["boundary"]
+s1375 = j("--minutes", "1375", "--chars-per-minute", "900")["boundary"]
+s1376 = j("--minutes", "1376", "--chars-per-minute", "900")["boundary"]
+check("305 min @900 -> Creator $22", (s305["chosen"]["plan"], s305["chosen"]["usd"]) == ("Creator", 22), s305["chosen"])
+check("306 min @900 -> Pro $99", (s306["chosen"]["plan"], s306["chosen"]["usd"]) == ("Pro", 99), s306["chosen"])
+check("306 and 1,375 min both cost $99 @900",
+      s306["chosen"]["usd"] == s1375["chosen"]["usd"] == 99, (s306["chosen"], s1375["chosen"]))
+check("1,376 min @900 leaves the $99 block", s1376["chosen"]["usd"] == 299, s1376["chosen"])
+check("minute 306 costs $77 @900", s306["extra_usd"] == 77, s306["extra_usd"])
+# measured speech: 275,000 chars / 741 = 371.1 finished minutes
+check("Creator covers 371.1 min at 741 chars/min", abs(371.12 - LADDER["Creator"]["chars"] / 741.0) < 0.02,
+      LADDER["Creator"]["chars"] / 741.0)
+m741 = j("--minutes", "300", "--chars-per-minute", "741")["boundary"]
+check("300 min @741 -> Creator $22", m741["chosen"]["usd"] == 22, m741["chosen"])
+# the crossover: 275,000 / 300 = 916.67 chars per minute
+check("crossover = 916.7 chars/min", abs(LADDER["Creator"]["chars"] / 300.0 - 916.6667) < 0.001)
+lo = j("--minutes", "300", "--chars-per-minute", "916")["boundary"]
+hi = j("--minutes", "300", "--chars-per-minute", "917")["boundary"]
+check("300 min @916 fits the $22 plan", lo["chosen"]["usd"] == 22, lo["chosen"])
+check("300 min @917 needs the $99 plan", hi["chosen"]["usd"] == 99, hi["chosen"])
+# README claims (added run 139): the baseline pair, the measured band, and no vendor-basis pair as the headline
+for expect in ("306 minutes and 1,375 minutes", "916.7", "371 finished", "714–780", "median 741"):
+    check(f"README states {expect}", expect in README, expect)
+check("README does not claim 300 and 1,238 min at the 900 baseline",
+      "300 minutes and 1,238 minutes" not in README)
+check("README does not call $3.08 the price of the one minute that tipped it",
+      "for the one minute that put you over" not in README)
 
 # ---- 5. past the top of the published ladder ----
 e = j("--minutes", "13000", "--chars-per-minute", "1000")["boundary"]

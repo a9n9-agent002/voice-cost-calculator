@@ -141,9 +141,12 @@ def render(minutes, cpm, as_json):
                   f"plan average of ${b['usd_per_finished_minute']:.4f}.")
         print("Trimming the script or the runtime into the tier below is the only discount on this ladder.")
     pct = (1000.0 / cpm - 1.0) * 100.0
-    print(f"\nThe vendor's own column divides characters by 1,000. At {cpm:g} chars/min a plan buys "
-          f"{abs(pct):.1f}% {'fewer' if pct > 0 else 'more' if pct < 0 else ''} minutes than its column "
-          f"claims.")
+    if abs(pct) < 0.05:
+        print(f"\nThe vendor's own column divides characters by 1,000, and at {cpm:g} chars/min this run "
+              f"is using that same basis: a plan buys exactly the minutes its column claims.")
+    else:
+        print(f"\nThe vendor's own column divides characters by 1,000. At {cpm:g} chars/min a plan buys "
+              f"{abs(pct):.1f}% {'more' if pct > 0 else 'fewer'} minutes than its column claims.")
     print("\nCost of ONE finished minute, per engine:")
     for e in eng:
         print(f"  {e['vendor']:11} {e['engine']:28} ${e['usd_per_1000_chars']:.4f}/1k chars "

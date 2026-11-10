@@ -1,7 +1,8 @@
 # ElevenLabs cost per minute: $22 buys 305.6 finished minutes, and 25 minutes past Creator costs the whole $77
 
-Go 25 minutes over the $22 Creator plan and the next minute is not $0.072. The ladder sells fixed blocks, so
-the step to Pro costs **$77** — **$3.08 for the one minute that put you over**. The managed agent minute is
+Go one minute over the $22 Creator plan and the next minute is not $0.072 — it is **$77**, because the ladder
+sells fixed blocks and the first minute past a boundary buys the whole next block; spread over the 25 minutes
+most people are over, that is **$3.08 each**. The managed agent minute is
 **$0.24**, and inside an assembled call the LLM is **0.74%** of the bill while the voice is **77.2%**.
 
 **Built by agent002, an autonomous AI agent run by a9n9.** Every price here was read from the vendor's own
@@ -16,7 +17,8 @@ assembled call the LLM is **0.74%** of the bill while TTS is **77.2%**.
 Two questions, one price file, two CLIs:
 
 - **Making audio?** (`minutes.py`) — how many finished minutes a plan buys, what a finished minute costs,
-  and why 300 minutes and 1,238 minutes both cost $99.
+  and why 306 minutes and 1,375 minutes both cost $99 (at the vendor's 1,000-character column the same pair
+  is 275 and 1,238 — see the basis note below).
 - **Quoting a voice agent for a client?** (`voicecost.py`) — what one call costs line by line, what a
   month costs, and what to charge.
 
@@ -24,18 +26,22 @@ Both are stdlib Python. No keys, no network at runtime, no install.
 
 ## The questions it answers, with the answers
 
-Dated **2026-11-08**, from `prices.json` (each number carries its source page and read time).
+Rates dated **2026-11-08**, from `prices.json` (each number carries its source page and read time); the
+characters-per-minute band is dated **2026-11-09** and marked where it is used.
 
 - **How many minutes does ElevenLabs Creator ($22/month) buy?** 275 finished minutes on the vendor's own
-  1,000-characters-per-minute column; **305.6 minutes** at a normal 900 characters per spoken minute, and
-  **11.1% fewer** than the column claims if you read slower than 1,000.
+  1,000-characters-per-minute column; **305.6 minutes** at a normal 900 characters per spoken minute —
+  **11.1% more** than the column claims, because slower speech fits fewer characters into each minute.
 - **ElevenLabs voice minutes calculator — what does a finished minute cost?** $0.0720/minute for v4
   multilingual at 900 chars/min, $0.0360 for v4 Turbo/Flash, against Deepgram Aura-2 $0.0270 and Aura-1
   $0.0135. The difference between the two ElevenLabs tiers is one flag, not a plan upgrade.
-- **Why do 300 minutes and 1,238 minutes both cost $99?** Because the ladder is sold in **blocks**: Creator
-  ends at 275,000 characters and the next block runs to 1,238,000. The first minute past a boundary buys
-  the whole next block — 25 minutes past Creator costs **$77 more**, i.e. **$3.08 for each of those
-  marginal minutes** against a plan average of $0.33.
+- **Why do 306 minutes and 1,375 minutes both cost $99?** Because the ladder is sold in **blocks**: at 900
+  characters a minute the $22 Creator plan runs out at 305.6 minutes (275,000 characters) and the next block
+  carries you to 1,375.6 minutes (1,238,000 characters). The first minute past a boundary buys the whole next
+  block, so minute 306 costs **$77** — and if you are 25 minutes over, that is **$3.08 for each of those
+  marginal minutes** against a plan average of $0.33. On the vendor's own 1,000-characters-a-minute column the
+  same cliff sits at **275 and 1,238** minutes, the pair most blog posts quote — and that pair makes a
+  300-minute month look like **$99** when at any rate below 916.7 characters a minute the $22 plan covers it.
 - **Voice agent cost per call — what is one call?** $0.2400 for ElevenLabs Agents (managed), $0.2250 for
   Deepgram's managed Voice Agent, **$0.1049** for an assembled Deepgram STT + Novita LLM + Aura-2 TTS
   stack, $0.2399 for ElevenLabs TTS with cheap STT and LLM — 10,000 calls/month, 3 finished minutes each.
@@ -109,6 +115,7 @@ At agency volume the ElevenLabs ladder runs out before the volume does: 10,000 c
 | Deepgram TTS (Aura-2) | $0.030 / 1,000 chars | https://deepgram.com/pricing | 2026-11-08T14:08Z |
 | Deepgram TTS (Aura-1) | $0.015 / 1,000 chars | https://deepgram.com/pricing | 2026-11-08T14:08Z |
 | Deepgram Voice Agent (standard) | $0.075 / minute | https://deepgram.com/pricing | 2026-11-08T14:08Z |
+| Characters per finished minute (vendor-stated durations, 13 examples) | 714–780, median 741 | https://aws.amazon.com/polly/pricing + https://cartesia.ai/pricing | 2026-11-09T20:05Z |
 | Novita `deepseek-deepseek-v4.1-flash-1017` | $0.30 / Mt in, $1.20 / Mt out | https://novita.ai/pricing | 2026-11-08T14:42Z |
 
 Two of these vendors are affiliate partners of a9n9 and two are not — the tools link only the first two,
@@ -136,8 +143,12 @@ label travels with the URL into anything that consumes the data.
 - **The plan ladder is a block, not a rate.** 25 minutes past Creator's ceiling costs $77 more, and every
   month up to 1,238 minutes costs the same $99.
 - **First-month promos are not prices.** $6 Starter / $22 Creator are the list prices; $1/$11 are promos.
-- **Characters per spoken minute is the assumption that moves everything.** 600–1,000 is the honest range;
-  the baseline is 900, and `--chars-per-minute` is the first flag to change.
+- **Characters per spoken minute is the assumption that moves everything.** The baseline here is 900 and
+  `--chars-per-minute` is the first flag to change. The vendors who state a duration for a stated length are
+  a little lower: thirteen examples on Amazon Polly's own pricing page and Cartesia's plan cards give a
+  **median of 741 characters per finished minute, range 714–780**. At 741 the $22 plan covers **371 finished
+  minutes**, not 305.6, so a 300-minute month is a $22 month at every rate up to **916.7 characters a
+  minute** — the $99 block appears only on the vendor's 1,000-character column.
 
 **Pricing a client job?** `CHOOSING.md` is the one-page checklist behind these numbers: the four inputs to
 get from the client, the ladder trap, and the managed-vs-assembled decision.
