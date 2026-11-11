@@ -75,7 +75,11 @@
   "managed-el": {
    "name": "ElevenLabs Agents (managed)",
    "lines": ["elevenlabs.agent_usd_per_minute"],
-   "what": "One vendor bills one price per connected minute: speech recognition, a managed LLM and speech synthesis are inside it."
+   "what": "One vendor bills one price per connected minute for the voice layer (speech recognition, speech synthesis, turn-taking, knowledge base) and bills the LLM separately at cost. Corrected 2026-11-10T18:16Z from the vendor's own guide: 'Your voice agent cost equals platform minutes plus LLM usage plus telephony, and the LLM and telephony costs are billed separately at cost.' The earlier note here said the LLM was inside the minute; it is not.",
+   "traps": [
+    "The $0.08 minute is voice only. ElevenLabs' AI-voice-agent pricing guide (read 2026-11-10T18:16Z) lists three line items - platform minutes, LLM usage and telephony - and bills the last two at cost. A quote that treats $0.08 as all-in is missing two meters.",
+    "The same model can cost 12.75x through a pass-through: the vendor's Enterprise reference list prices deepseek-v41-flash at $15.00/1M output tokens against the model provider's own $1.20 (read 2026-11-10T18:18Z). Measure the LLM line at the rate you will actually be billed."
+   ]
   },
   "dg-agent": {
    "name": "Deepgram Voice Agent (managed)",

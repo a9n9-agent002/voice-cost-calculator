@@ -1,0 +1,158 @@
+{
+ "as_of": "2026-11-10",
+ "title": "One 20-turn voice-agent call, priced line by line",
+ "method": "Speech durations taken from synthesized audio (Piper, 3 tiers, median) rather than the vendor's per-character table; the transcript of the same call tokenized with the vendor's tokenizer; every token priced twice, once at the model provider's list and once at the pass-through row printed on ElevenLabs' Enterprise reference page. Telephony at a US outbound rate. No retries, no tool calls, one model.",
+ "sources": [
+  {
+   "what": "ElevenLabs AI voice agent pricing guide (platform minutes + LLM usage + telephony, last two at cost)",
+   "where": "elevenlabs.io/blog/ai-voice-agent-pricing-guide",
+   "read": "2026-11-10T18:16Z"
+  },
+  {
+   "what": "ElevenLabs API price list ($0.08 per platform minute, flat ladder $0.08 per 1,000 characters)",
+   "where": "elevenlabs.io/pricing/api",
+   "read": "2026-11-08T15:15Z"
+  },
+  {
+   "what": "Deepgram Voice Agent standard rate (STT + managed LLM + TTS), $0.075 per minute",
+   "where": "deepgram.com/pricing",
+   "read": "2026-11-08T14:08Z"
+  },
+  {
+   "what": "DeepSeek V4.1 Flash list price used for the LLM line",
+   "where": "novita.ai model list",
+   "read": "2026-11-10"
+  }
+ ],
+ "call": {
+  "turns": 20,
+  "exchanges": 10,
+  "speech_seconds": 113.88,
+  "pause_seconds_per_turn": 0.8,
+  "call_seconds": 129.88,
+  "call_minutes": 2.165,
+  "turns_per_minute": 9.24,
+  "chars_spoken": 2019,
+  "chars_per_spoken_minute": 1063.8,
+  "system_prompt_tokens": 161
+ },
+ "tokens": {
+  "input": 4243,
+  "cacheable_prefix": 4023,
+  "new": 220,
+  "output": 326,
+  "input_tokens_per_minute": 1960.1,
+  "output_tokens_per_minute": 150.6,
+  "cacheable_share_pct": 94.8
+ },
+ "prices_per_mtok": {
+  "novita_deepseek_v4_1_flash": {
+   "input": 0.3,
+   "output": 1.2,
+   "cache_read": 0.006
+  },
+  "elevenlabs_pass_through_row": {
+   "input": 0.55,
+   "output": 15.0,
+   "cache_read": 0.28,
+   "cache_write": 0.55
+  },
+  "platform_per_minute": 0.08,
+  "telephony_assumed_per_minute": 0.0085,
+  "deepgram_stt_stream_per_minute": 0.0077,
+  "deepgram_aura2_per_1000_chars": 0.03
+ },
+ "ratios": {
+  "input": 1.83,
+  "output": 12.5,
+  "cache_read": 46.7
+ },
+ "llm_per_call": {
+  "novita_usd": 0.000481,
+  "elevenlabs_pass_usd": 0.006137,
+  "ratio": 12.75,
+  "output_share_of_pass_bill_pct": 79.7,
+  "output_share_of_novita_bill_pct": 81.3
+ },
+ "lines_per_call": {
+  "platform_usd": 0.17317,
+  "telephony_usd": 0.0184,
+  "stt_usd": 0.01667,
+  "tts_usd": 0.06057,
+  "llm_novita_usd": 0.000481,
+  "llm_pass_usd": 0.006137
+ },
+ "totals_per_call": {
+  "managed_elevenlabs_usd": 0.19771,
+  "assembled_novita_usd": 0.09612,
+  "assembled_pass_priced_usd": 0.10178,
+  "managed_over_assembled": 2.06,
+  "llm_share_managed_pct": 3.1,
+  "llm_share_assembled_pct": 0.5
+ },
+ "growth": [
+  {
+   "exchanges": 10,
+   "minutes": 2.16,
+   "input_tokens": 4023,
+   "output_tokens": 326,
+   "llm_pass_usd": 0.00608,
+   "llm_pass_per_minute": 0.00281,
+   "managed_total_usd": 0.19765,
+   "llm_share_pct": 3.07,
+   "tokens_per_minute": 1858.5
+  },
+  {
+   "exchanges": 20,
+   "minutes": 4.33,
+   "input_tokens": 12433,
+   "output_tokens": 652,
+   "llm_pass_usd": 0.01338,
+   "llm_pass_per_minute": 0.00309,
+   "managed_total_usd": 0.39653,
+   "llm_share_pct": 3.37,
+   "tokens_per_minute": 2871.9
+  },
+  {
+   "exchanges": 40,
+   "minutes": 8.66,
+   "input_tokens": 42416,
+   "output_tokens": 1304,
+   "llm_pass_usd": 0.03167,
+   "llm_pass_per_minute": 0.00366,
+   "managed_total_usd": 0.79797,
+   "llm_share_pct": 3.97,
+   "tokens_per_minute": 4898.6
+  },
+  {
+   "exchanges": 80,
+   "minutes": 17.32,
+   "input_tokens": 155028,
+   "output_tokens": 2608,
+   "llm_pass_usd": 0.083,
+   "llm_pass_per_minute": 0.00479,
+   "managed_total_usd": 1.61559,
+   "llm_share_pct": 5.14,
+   "tokens_per_minute": 8952.2
+  }
+ ],
+ "crossover": {
+  "basis": "input price at which the input side alone equals the $0.08 platform minute; output left at the pass-through rate",
+  "output_tokens_alone_usd_per_minute": 0.00226,
+  "input_price_that_equals_platform_usd_per_mtok": 39.66,
+  "multiple_of_model_list_input": 132.2,
+  "superseded_run169_value": 759.8,
+  "superseded_note": "not reproducible from the recorded token counts; do not quote"
+ },
+ "vendor_rates": {
+  "elevenlabs_platform_usd_per_minute": 0.08,
+  "deepgram_voice_agent_standard_usd_per_minute": 0.075,
+  "telephony_us_assumed_usd_per_minute": 0.0085
+ },
+ "not_measured": [
+  "the vendor's own voice models (durations come from a local TTS engine at 1,063.8 characters per spoken minute)",
+  "retries, interruptions, tool calls and dead air beyond the fixed 0.8 s pause per turn",
+  "non-US telephony rates",
+  "Deepgram's managed-LLM token prices (its agent minute is a bundle; only the bundle rate is used here)"
+ ]
+}

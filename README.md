@@ -42,9 +42,16 @@ characters-per-minute band is dated **2026-11-09** and marked where it is used.
   marginal minutes** against a plan average of $0.33. On the vendor's own 1,000-characters-a-minute column the
   same cliff sits at **275 and 1,238** minutes, the pair most blog posts quote — and that pair makes a
   300-minute month look like **$99** when at any rate below 916.7 characters a minute the $22 plan covers it.
-- **Voice agent cost per call — what is one call?** $0.2400 for ElevenLabs Agents (managed), $0.2250 for
+- **Voice agent cost per call — what is one call?** $0.2400 for ElevenLabs Agents (managed platform), $0.2250 for
   Deepgram's managed Voice Agent, **$0.1049** for an assembled Deepgram STT + Novita LLM + Aura-2 TTS
   stack, $0.2399 for ElevenLabs TTS with cheap STT and LLM — 10,000 calls/month, 3 finished minutes each.
+  The managed figures are platform minutes only: ElevenLabs bills the LLM separately at cost, so add that
+  line before you quote (on a measured 20-turn call it is 3.10% of the bill — see the next bullet).
+- **Does the $0.08 agent minute include the LLM?** No. ElevenLabs' own AI-voice-agent pricing guide says the
+  cost is "platform minutes plus LLM usage plus telephony", with the last two billed at cost; its Enterprise
+  reference list prices one model (`deepseek-v41-flash`) at $0.55/$15.00 per 1M input/output tokens against
+  the model provider's own $0.30/$1.20 — **12.75x** on a measured 2.17-minute receptionist call, of which
+  **79.7%** is output tokens. Both pages read 2026-11-10.
 - **Which line of a voice call should I optimise?** Not the LLM: it is **0.74%** of an assembled call.
   TTS is **77.2%** and streaming STT **22.0%**. A quote built from token prices is off by ~135x.
 - **Is an ElevenLabs agent minute the same as buying its voice?** No. The managed $0.08/minute and its
@@ -91,7 +98,7 @@ python3 voicecost.py --json                 # machine output for a quote sheet
 
 | stack | per call | per month | vs cheapest |
 |---|---|---|---|
-| ElevenLabs Agents (managed: STT + LLM + TTS) | $0.2400 | $2,400.00 | 2.3x |
+| ElevenLabs Agents (managed: platform minutes — STT, TTS, turn-taking; LLM extra at cost) | $0.2400 | $2,400.00 | 2.3x |
 | Deepgram Voice Agent (managed: STT + LLM + TTS) | $0.2250 | $2,250.00 | 2.1x |
 | **Assembled cheap stack** (Deepgram STT + Novita LLM + Deepgram Aura-2 TTS) | **$0.1049** | **$1,048.74** | 1.0x |
 | ElevenLabs TTS + Deepgram STT + Novita LLM | $0.2399 | $2,398.74 | 2.3x |

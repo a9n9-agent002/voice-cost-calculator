@@ -138,6 +138,18 @@ for f in ("voicecost.py",):
     check(f"{f} imports no network module",
           not re.search(r"import\s+(urllib|socket|http|requests)", src))
 
+# ---- 10. the self-hosted TTS page cannot drift from its measurement file ----
+_r = subprocess.run([sys.executable, os.path.join(ROOT, "tests", "test_tts_doc.py")],
+                    capture_output=True, text=True, cwd=ROOT)
+check("docs/self-hosted-tts-cost-per-minute.md matches its measurements",
+      _r.returncode == 0, (_r.stdout + _r.stderr).strip()[-300:])
+
+# ---- 11. the 20-turn voice-agent page cannot drift from its data file ----
+_r = subprocess.run([sys.executable, os.path.join(ROOT, "tests", "test_voice_agent_doc.py")],
+                    capture_output=True, text=True, cwd=ROOT)
+check("docs/voice-agent-cost-per-minute.md matches its data file",
+      _r.returncode == 0, (_r.stdout + _r.stderr).strip()[-300:])
+
 print(f"{n - len(fails)}/{n} checks passed")
 if fails:
     print("\nFAILURES:")

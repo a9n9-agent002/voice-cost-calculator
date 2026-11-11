@@ -1,0 +1,131 @@
+{
+  "measured_at_utc": "2026-11-10T15:50Z",
+  "what": "cost of 1,000 minutes of synthesized speech on a CPU-only server, measured",
+  "engine": "piper-tts 1.8.0 (onnxruntime CPU build), one process at a time, no concurrency",
+  "host_cpu": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
+  "host_cores": 8,
+  "text": {
+    "chars": 949,
+    "note": "the same 949-character paragraph in every run"
+  },
+  "pricing_basis": {
+    "droplet_usd_per_month": 6.0,
+    "hours_per_month": 730.0,
+    "usd_per_cpu_hour": 0.008219,
+    "note": "marginal cost of CPU time only; the server is assumed already rented and paid for"
+  },
+  "tiers": [
+    {
+      "voice": "en_US-lessac-low",
+      "quality": "low",
+      "runs": [
+        {
+          "wall_s": 4.47,
+          "audio_s": 51.44,
+          "speedup": 11.509
+        },
+        {
+          "wall_s": 4.769,
+          "audio_s": 51.92,
+          "speedup": 10.887
+        },
+        {
+          "wall_s": 4.553,
+          "audio_s": 51.728,
+          "speedup": 11.36
+        }
+      ],
+      "speedup_median": 11.36,
+      "speedup_min": 10.887,
+      "speedup_max": 11.509,
+      "audio_s_median": 51.728,
+      "audio_minutes_per_cpu_hour": 681.6,
+      "cpu_hours_per_1000_audio_minutes": 1.467,
+      "usd_per_1000_audio_minutes": 0.0121,
+      "usd_per_audio_minute": 1.2e-05,
+      "audio_hours_per_core_month": 8293.0,
+      "peak_rss_mb": 319.6
+    },
+    {
+      "voice": "en_US-lessac-medium",
+      "quality": "medium",
+      "runs": [
+        {
+          "wall_s": 4.802,
+          "audio_s": 51.676,
+          "speedup": 10.761
+        },
+        {
+          "wall_s": 5.701,
+          "audio_s": 51.304,
+          "speedup": 8.999
+        },
+        {
+          "wall_s": 5.553,
+          "audio_s": 52.198,
+          "speedup": 9.4
+        }
+      ],
+      "speedup_median": 9.4,
+      "speedup_min": 8.999,
+      "speedup_max": 10.761,
+      "audio_s_median": 51.676,
+      "audio_minutes_per_cpu_hour": 564.0,
+      "cpu_hours_per_1000_audio_minutes": 1.773,
+      "usd_per_1000_audio_minutes": 0.0146,
+      "usd_per_audio_minute": 1.5e-05,
+      "audio_hours_per_core_month": 6862.0,
+      "peak_rss_mb": 370.0
+    },
+    {
+      "voice": "en_US-lessac-high",
+      "quality": "high",
+      "runs": [
+        {
+          "wall_s": 14.61,
+          "audio_s": 51.363,
+          "speedup": 3.516
+        },
+        {
+          "wall_s": 16.565,
+          "audio_s": 50.805,
+          "speedup": 3.067
+        },
+        {
+          "wall_s": 16.387,
+          "audio_s": 51.583,
+          "speedup": 3.148
+        }
+      ],
+      "speedup_median": 3.148,
+      "speedup_min": 3.067,
+      "speedup_max": 3.516,
+      "audio_s_median": 51.363,
+      "audio_minutes_per_cpu_hour": 188.9,
+      "cpu_hours_per_1000_audio_minutes": 5.294,
+      "usd_per_1000_audio_minutes": 0.0435,
+      "usd_per_audio_minute": 4.4e-05,
+      "audio_hours_per_core_month": 2298.0,
+      "peak_rss_mb": 442.3
+    }
+  ],
+  "chars_per_audio_minute": 1103.8,
+  "hosted_reference": {
+    "vendor": "ElevenLabs",
+    "usd_per_1000_chars": 0.08,
+    "usd_per_audio_minute": 0.08831,
+    "usd_per_1000_audio_minutes": 88.31,
+    "note": "0.08 USD per 1,000 characters x the measured 1103.8 characters per audio minute"
+  },
+  "ratio_medium_vs_hosted": 6048.5,
+  "ratio_high_vs_hosted": 2030.1,
+  "peak_ram": {
+    "note": "peak resident memory of the synthesis process, one process at a time, measured with getrusage on a wrapper whose only child is piper",
+    "mb_by_quality": {
+      "low": 319.6,
+      "medium": 370.0,
+      "high": 442.3
+    }
+  },
+  "caveat": "A laptop-class core measured in isolation, one process at a time. A droplet vCPU is shared and should be faster, so these are a lower bound on speed and an upper bound on cost. Memory is the real constraint on a 1 GB Droplet: the process alone peaks at 319.6 MB (low) to 442.3 MB (high)."
+}
